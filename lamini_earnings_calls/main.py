@@ -81,6 +81,16 @@ class QuestionGenerator(GenerationNode):
             logger.info(f"Generated question for {result}")
             if result is None:
                 continue
+
+            if "question_1" not in result.response:
+                continue
+
+            if "question_2" not in result.response:
+                continue
+
+            if "question_3" not in result.response:
+                continue
+
             questions = result.response["question_1"], result.response["question_2"], result.response["question_3"]
             for question in questions:
                 result = PromptObject(prompt=question, data=result.data.copy())
