@@ -54,23 +54,17 @@ class EmbeddingGenerator(EmbeddingNode):
     async def transform_prompt(
         self, prompt: Union[Iterator[PromptObject], AsyncIterator[PromptObject]]
     ):
-        # print("prompt1", prompt)
         if isinstance(prompt, Iterator):
             for a in prompt:
-                # print(f"self.preprocess {self.preprocess}")
-                # print(f"self.preprocess {self.preprocess is None}")
                 if self.preprocess:
-                    # print("preprocess OOGABOOGA")
                     mod_a = self.preprocess(a)
                     if mod_a is not None:
                         a = mod_a
                 yield a
         elif isinstance(prompt, AsyncIterator):
             async for a in prompt:
-                # print(f"self.preprocess2 {self.preprocess}")
 
                 if self.preprocess:
-                    # print("preprocess OOGABOOGA2")
                     mod_a = self.preprocess(a)
                     if mod_a is not None:
                         a = mod_a
@@ -79,10 +73,8 @@ class EmbeddingGenerator(EmbeddingNode):
             raise Exception("Invalid prompt type")
 
     def preprocess(self, prompt: PromptObject):
-        # print("preprocess OOGABOOGA3")
 
         prompt.prompt = self.form_prompt(prompt.data)
-        # print("prompt2", prompt.prompt)
 
     async def batch(self, examples):
         batch = []
