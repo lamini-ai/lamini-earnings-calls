@@ -19,6 +19,7 @@ logging.basicConfig(
 
 
 async def main():
+    lamini.max_workers = 40
     lamini.batch_size = 128
     classifier = LaminiClassifier.load("models/classifier.lamini")
 
@@ -52,7 +53,7 @@ class EmbeddingGenerator(EmbeddingNode):
     def __init__(self, classifier: LaminiClassifier):
         super(EmbeddingGenerator, self).__init__(
             model_name="meta-llama/Llama-2-7b-chat-hf",
-            max_tokens=200,  # This is a hack to get more credits for embeddings
+            max_tokens=5,  # This is a hack to get more credits for embeddings
         )
         self.classifier = classifier
 
