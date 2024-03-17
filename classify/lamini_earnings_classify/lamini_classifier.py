@@ -1,16 +1,15 @@
-import os
-import random
-import pickle
-import jsonlines
 import logging
-
+import os
+import pickle
+import random
+from itertools import chain
 from typing import List
+
+import jsonlines
 from lamini import LlamaV2Runner
 from lamini.api.embedding import Embedding
 from sklearn.linear_model import LogisticRegression
 from tqdm import tqdm
-from itertools import chain
-
 
 logger = logging.getLogger(__name__)
 
@@ -165,8 +164,8 @@ class LaminiClassifier:
             X += class_embeddings
 
         # print x and y
-        #logger.debug(X)
-        #logger.debug(y)
+        # logger.debug(X)
+        # logger.debug(y)
 
         # Train the classifier
         self.logistic_regression = LogisticRegression(random_state=0).fit(X, y)
@@ -207,6 +206,9 @@ class LaminiClassifier:
     def predict_proba(self, text):
         return self.logistic_regression.predict_proba(self.get_embeddings(text))
 
+    def predict_proba_from_embedding(self, embeddings):
+        return self.logistic_regression.predict_proba(embeddings)
+
     def predict(self, text):
         if not isinstance(text, list):
             raise Exception("Text to predict must be a list of string(s)")
@@ -225,11 +227,29 @@ class LaminiClassifier:
             for class_id in winning_classes
         ]
 
+    def classify_from_embedding(
+        self, embedding, top_n=None, threshold=None, metadata=False
+    ):
+        is_singleton = True if len(embedding) == 1 else False
+
+        batch_probs = self.predict_proba_from_embedding(embedding)
+
+        return self._classify_impl(
+            batch_probs, is_singleton, top_n, threshold, metadata
+        )
+
     def classify(self, text, top_n=None, threshold=None, metadata=False):
         is_singleton = True if isinstance(text, str) else False
 
         batch_probs = self.predict_proba(text)
 
+        return self._classify_impl(
+            batch_probs, is_singleton, top_n, threshold, metadata
+        )
+
+    def _classify_impl(
+        self, batch_probs, is_singleton, top_n=None, threshold=None, metadata=False
+    ):
         batch_final_probs = []
         for probs in batch_probs:
             final_probs = []
