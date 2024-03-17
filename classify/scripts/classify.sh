@@ -12,5 +12,5 @@ set -Eeuoxa pipefail
 # Get the directory of this script
 LOCAL_DIRECTORY="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
-PYTHONPATH="${LOCAL_DIRECTORY}/.." python3 "${LOCAL_DIRECTORY}/../lamini_earnings_classify/classify.py" $@
+PYTHONPATH="${LOCAL_DIRECTORY}/.." python3 "${LOCAL_DIRECTORY}/../lamini_earnings_classify/classify_pipeline.py" $@
 

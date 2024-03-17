@@ -1,2 +1,2 @@
-lamini
+lamini==2.1.4a3
 matplotlib
