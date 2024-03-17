@@ -42,13 +42,18 @@ class ClassificationPipeline(GenerationPipeline):
         self.embedding_generator = EmbeddingGenerator(classifier)
 
     def forward(self, x):
-        x = self.embedding_generator(x)
+        x = self.embedding_generator(
+            x, model_name="sentence-transformers/all-MiniLM-L6-v2"
+        )
         return x
 
 
 class EmbeddingGenerator(EmbeddingNode):
     def __init__(self, classifier: LaminiClassifier):
-        super(EmbeddingGenerator, self).__init__()
+        super(EmbeddingGenerator, self).__init__(
+            model_name="meta-llama/Llama-2-7b-chat-hf",
+            max_tokens=200,  # This is a hack to get more credits for embeddings
+        )
         self.classifier = classifier
 
     async def transform_prompt(
@@ -73,7 +78,6 @@ class EmbeddingGenerator(EmbeddingNode):
             raise Exception("Invalid prompt type")
 
     def preprocess(self, prompt: PromptObject):
-
         prompt.prompt = self.form_prompt(prompt.data)
 
     async def batch(self, examples):
