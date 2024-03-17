@@ -97,12 +97,16 @@ class EmbeddingGenerator(EmbeddingNode):
                 yield r
 
     def postprocess(self, prompt_list: List[PromptObject]):
-        probabilities = self.classifier.classify_from_embedding(
-            [prompt.response for prompt in prompt_list]
-        )
-        for prompt, probability in zip(prompt_list, probabilities):
-            prompt.data["predictions"] = probability
-        return prompt_list
+        try:
+            probabilities = self.classifier.classify_from_embedding(
+                [prompt.response for prompt in prompt_list]
+            )
+            for prompt, probability in zip(prompt_list, probabilities):
+                prompt.data["predictions"] = probability
+            return prompt_list
+        except Exception as e:
+            logger.error(e)
+            return [None for _ in prompt_list]
 
     def form_prompt(self, example):
         prompt = "Consider this earnings call transcript:\n"
