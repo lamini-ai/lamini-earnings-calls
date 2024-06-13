@@ -1,3 +1,5 @@
+# This repo has been deprecated, please refer to https://github.com/lamini-ai/lamini-sdk
+
 # lamini-earnings-calls
 
 Generate a question answer dataset from any earnings call transcript.  Perfect for finetuning LLMs that are experts in current financial data.
